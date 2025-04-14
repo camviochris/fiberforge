@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from converters import adtran, dzs, calix  # Add calix when ready
+from converters import adtran, dzs  # calix will be added later
 
 st.set_page_config(page_title="FiberForge", layout="centered")
 
@@ -69,11 +69,8 @@ elif st.session_state.step == 4:
             elif manufacturer == "DZS":
                 preview_df, file_name = dzs.convert(df)
             elif manufacturer == "Calix":
-                preview_df, file_name = calix.convert(df)
-            else:
                 st.warning("'Other' not yet supported. Please select a supported manufacturer.")
-                preview_df = None
-                file_name = None
+                preview_df, file_name = None, None
 
             if preview_df is not None:
                 st.dataframe(preview_df.head(10), use_container_width=True)
