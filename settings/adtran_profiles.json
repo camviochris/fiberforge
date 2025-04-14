@@ -1,0 +1,10 @@
+{
+  "SDX622V": {
+    "device_profile": "ADTN_ONT",
+    "template": "MAC=<<MAC>>|SN=<<SN>>|ONT_FSAN=<<FSAN>>|ONT_ID=no value|ONT_NODENAME=no value|ONT_PORT=1|ONT_PROFILE_ID=164|ONT_MOMENTUM_PASSWORD=no value"
+  },
+  "ADTN-611": {
+    "device_profile": "ADTN_ONT",
+    "template": "MAC=<<MAC>>|SN=<<SN>>|ONT_PORT=1"
+  }
+}
