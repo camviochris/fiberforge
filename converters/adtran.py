@@ -7,41 +7,60 @@ def load_profiles():
     with open("settings/adtran_profiles.json") as f:
         return json.load(f)
 
-def find_column(columns, patterns):
-    for pat in patterns:
-        for col in columns:
-            if re.search(pat, col, re.IGNORECASE):
-                return col
-    return None
+def detect_device_name(description):
+    desc = description.strip()
+    if desc.startswith("SDG 854-V6"):
+        return "SDG854-V6"
+    elif desc.startswith("SDG 841-T6"):
+        return "SDG841-T6"
+    elif desc.startswith("SDG8612"):
+        return "SDG8612"
+    elif desc.startswith("SDX630"):
+        return "SDX630"
+    elif desc.startswith("SDX622V"):
+        return "SDX622V"
+    elif desc.startswith("ADTN-611"):
+        return "ADTN-611"
+    elif desc.startswith("ADTN-622"):
+        return "ADTN-622"
+    elif desc.startswith("ADTN-632"):
+        return "ADTN-632"
+    else:
+        return desc
 
 def convert(df):
     profiles = load_profiles()
     default_status = 'UNASSIGNED'
+    default_location = 'WAREHOUSE'
     device_rows = []
 
-    serial_col = find_column(df.columns, [r'^serial number$', r'^serial$', r'^sn$'])
-    mac_col = find_column(df.columns, [r'^mac$', r'^mac address(es)?$'])
-    fsan_col = find_column(df.columns, [r'^fsan$'])
+    serial_col = next((col for col in df.columns if re.search(r'serial', col, re.IGNORECASE)), None)
+    mac_col = next((col for col in df.columns if re.search(r'mac', col, re.IGNORECASE)), None)
+    desc_col = next((col for col in df.columns if re.search(r'description', col, re.IGNORECASE)), None)
 
-    model = df.iloc[0].get('Model') or list(profiles.keys())[0]
-    profile_info = profiles.get(model)
-    if not profile_info:
-        raise ValueError(f"Unsupported model: {model}")
+    if not serial_col or not mac_col or not desc_col:
+        raise ValueError("Missing required columns: Serial, MAC, or Description.")
 
     for _, row in df.iterrows():
         serial = str(row.get(serial_col, '')).strip() or 'no value'
         mac = str(row.get(mac_col, '')).strip() or 'no value'
-        fsan = str(row.get(fsan_col, '')).strip() or 'no value'
-        template = profile_info["template"]
-        device_numbers = template.replace("<<MAC>>", mac).replace("<<SN>>", serial).replace("<<FSAN>>", fsan)
+        desc = str(row.get(desc_col, '')).strip() or 'no value'
+        device_name = detect_device_name(desc)
+        profile = profiles.get(device_name)
+
+        if not profile:
+            continue
+
+        template = profile["template"]
+        device_numbers = template.replace("<<MAC>>", mac).replace("<<SN>>", serial).replace("<<FSAN>>", "no value")
         device_rows.append({
-            "device_profile": profile_info["device_profile"],
-            "device_name": model,
+            "device_profile": profile["device_profile"],
+            "device_name": device_name,
             "device_numbers": device_numbers,
-            "location": "WAREHOUSE",
+            "location": default_location,
             "status": default_status
         })
 
     today = date.today().strftime("%Y%m%d")
-    file_name = f"converted_{today}_{model}.csv"
+    file_name = f"converted_{today}_adtran.csv"
     return pd.DataFrame(device_rows), file_name

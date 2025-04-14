@@ -6,5 +6,29 @@
   "ADTN-611": {
     "device_profile": "ADTN_ONT",
     "template": "MAC=<<MAC>>|SN=<<SN>>|ONT_PORT=1"
+  },
+  "ADTN-622": {
+    "device_profile": "ADTN_ONT",
+    "template": "MAC=<<MAC>>|SN=<<SN>>|ONT_PORT=2"
+  },
+  "SDX630": {
+    "device_profile": "ADTN_ONT",
+    "template": "MAC=<<MAC>>|SN=<<SN>>|ONT_PORT=1"
+  },
+  "ADTN-632": {
+    "device_profile": "ADTN_ONT",
+    "template": "MAC=<<MAC>>|SN=<<SN>>|ONT_PORT=2"
+  },
+  "SDG841-T6": {
+    "device_profile": "ADTN_ROUTER",
+    "template": "MAC=<<MAC>>|SN=<<SN>>"
+  },
+  "SDG8612": {
+    "device_profile": "ADTN_ROUTER",
+    "template": "MAC=<<MAC>>|SN=<<SN>>"
+  },
+  "SDG854-V6": {
+    "device_profile": "ADTN_ROUTER",
+    "template": "MAC=<<MAC>>|SN=<<SN>>"
   }
 }
